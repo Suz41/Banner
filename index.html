@@ -4,10 +4,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Story Banner Fullscreen</title>
+<title>Archive Banner</title>
 
 <!-- Clean Professional Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -27,39 +27,39 @@ html, body {
     background: #000000;
     color: var(--text-main);
     font-family: var(--font-main);
-    overflow: hidden; /* Locks screen strictly to viewport */
+    overflow: hidden; /* Strictly prevents any scrolling */
     -webkit-font-smoothing: antialiased;
     user-select: none; 
 }
 
 /* --- TRUE FULLSCREEN WRAPPER --- */
 .story-wrapper {
-    position: fixed;
-    inset: 0; /* Perfectly locks to all 4 corners of the screen */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: #0a0a0a;
+    overflow: hidden;
     z-index: 1;
 }
 
 /* --- DYNAMIC AMBIENT BACKGROUND --- */
 .dynamic-bg-canvas {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%; /* Bleeds past edges to avoid sharp borders */
+    height: 120%;
     object-fit: cover;
-    transform: scale(1.2); /* Bleeds past edges to avoid sharp borders */
     z-index: 0;
 }
 
 .dynamic-bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.9) 100%);
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.85) 100%);
     z-index: 1;
 }
 
@@ -74,19 +74,20 @@ html, body {
     z-index: 2;
 }
 
-/* --- MAIN CONTENT CENTERER --- */
+/* --- ABSOLUTE CENTERED CONTENT BLOCK --- */
 .main-content {
-    position: relative;
-    z-index: 10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    /* Slight transform to perfectly visually center it against the heavy poster */
-    transform: translateY(-2vh); 
+    z-index: 10;
 }
 
-/* --- EDITABLE FOCUS --- */
+/* --- EDITABLE FOCUS & PLACEHOLDERS --- */
 [contenteditable="true"] {
     outline: none;
     transition: all 0.2s;
@@ -94,16 +95,19 @@ html, body {
     z-index: 10;
     user-select: text; 
 }
-[contenteditable="true"]:focus {
-    background: rgba(255,255,255,0.1);
-    border-radius: 4px;
+[contenteditable="true"]:empty:before {
+    content: attr(placeholder);
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    display: block;
+    font-style: italic;
 }
 
 /* --- POSTER & AVATAR LAYOUT --- */
 .poster-wrapper {
     position: relative;
-    width: 68%;
-    max-width: 320px; 
+    width: 65%; 
+    max-width: 310px; 
     aspect-ratio: 2 / 3;
     margin-bottom: 24px;
 }
@@ -111,29 +115,28 @@ html, body {
 .poster {
     width: 100%;
     height: 100%;
-    background-image: url('https://image.tmdb.org/t/p/original/muWA9t1JVAxFBNP6gBbmKxj4VYc.jpg'); 
+    background-color: #111;
     background-position: center;
     background-size: cover;
     border-radius: 12px; 
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-    border: 2px solid rgba(255, 255, 255, 0.25);
+    border: 0.8px solid #ffffff; 
     transition: background-image 0.3s ease;
 }
 
 .avatar {
-    width: 56px;
-    height: 56px;
-    /* Reverted to direct URL so it never fails to load */
+    width: 48px;
+    height: 48px;
     background-image: url('https://upperstall.com/wp-content/uploads/2021/05/Satyajit-Ray-as-a-Young-Man-560x600.jpg');
     background-position: center;
     background-size: cover;
     border-radius: 50%;
     position: absolute;
-    top: -28px; 
+    top: -24px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 20;
-    border: 3px solid rgba(20, 20, 20, 0.9); 
+    border: 2px solid #ffffff; 
     box-shadow: 0 6px 16px rgba(0,0,0,0.6);
 }
 
@@ -144,7 +147,7 @@ html, body {
     align-items: center;
     width: 90%;
     max-width: 400px;
-    gap: 6px;
+    gap: 8px;
 }
 
 .title {
@@ -161,20 +164,46 @@ html, body {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.85); 
     font-weight: 600;
-    margin-bottom: 4px; 
+    margin-bottom: 2px; 
     text-align: center;
     text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 
-/* --- RATING STARS (TIGHT GAP) --- */
+/* --- RATING STARS & ABSOLUTE HEART --- */
+.rating-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative; /* Container logic */
+}
+
 .rating-system {
     display: flex;
     align-items: center;
+    position: relative; /* Heart will position perfectly relative to this block without expanding it */
 }
 
 .stars {
     display: flex;
     gap: 0px; 
+}
+
+.favorite-heart {
+    position: absolute;
+    left: calc(100% + 12px); /* Forces heart 12px to the right of the stars */
+    top: 50%;
+    transform: translateY(-50%); /* Centers vertically */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 10px rgba(255, 42, 85, 0.4));
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+/* Adjust click effect since we already have a transform for centering */
+.favorite-heart:active {
+    transform: translateY(-50%) scale(0.85);
 }
 
 /* --- ONE LINE REVIEW --- */
@@ -184,70 +213,62 @@ html, body {
     font-style: italic;
     color: rgba(255, 255, 255, 0.95);
     text-align: center;
-    margin-top: 6px;
+    margin-top: 4px;
     padding: 0 16px;
     line-height: 1.4;
     text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     width: 100%;
 }
-.review-text[contenteditable="true"]:empty:before {
-    content: "Write a one-line review...";
-    color: rgba(255, 255, 255, 0.5);
-    pointer-events: none;
-    font-style: normal;
-}
 
-/* --- ATTRIBUTION / REVIEW SOURCE --- */
-.attribution {
+/* --- CINEMATIC TYPOGRAPHY ARCHIVE LOCKUP --- */
+.archive-lockup {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 32px;
+    width: 85%;
+    max-width: 260px;
+    opacity: 0.95;
+}
+
+.lockup-line {
     width: 100%;
-    margin-top: 16px;
-}
-
-.divider-line {
-    display: flex;
-    align-items: center;
-    width: 60%;
-    margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.divider-line::before, .divider-line::after {
-    content: '';
-    flex: 1;
     height: 1px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 0 12px;
+    /* Fading gradient lines give structure without feeling boxed in */
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    margin: 8px 0;
 }
 
-.brand-row {
+.lockup-content {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+}
+
+.lockup-brand {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
     text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
-.brand-name {
-    font-size: 17px;
-    font-weight: 900;
+.lockup-user {
+    font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.5px;
     color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
-.brand-separator {
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 14px;
-}
-
-.username {
-    font-size: 14px;
-    font-weight: 600;
-    color: #cccccc;
+.lockup-user i {
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 1px;
 }
 
 /* --- SMALL COMPACT TOOLBAR --- */
@@ -263,10 +284,10 @@ html, body {
     -webkit-backdrop-filter: blur(25px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    padding: 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     z-index: 200;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
@@ -281,6 +302,7 @@ html, body {
     display: flex;
     gap: 8px;
     align-items: center;
+    width: 100%;
 }
 
 .search-wrapper { position: relative; flex: 1; }
@@ -327,9 +349,10 @@ html, body {
     border-radius: 12px; 
     cursor: pointer; 
     font-weight: 600; 
-    font-size: 13px; 
-    padding: 0 16px;
+    font-size: 12px; 
+    padding: 0 8px;
     white-space: nowrap;
+    flex: 1; 
 }
 .tool-btn:active { background: rgba(255, 255, 255, 0.2); }
 
@@ -361,9 +384,37 @@ html, body {
     transition: opacity 0.5s;
     z-index: 300;
 }
+
+/* Loading Overlay */
+#loadingOverlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    color: white;
+    font-weight: bold;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+.spinner {
+    width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
+
+<!-- LOADING SCREEN FOR INITIAL RANDOM MOVIE -->
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div style="font-size: 13px; color: #aaa;">Fetching Movie...</div>
+</div>
 
 <!-- MAIN STORY BANNER FULLSCREEN -->
 <div class="story-wrapper" id="storyWrapper">
@@ -380,26 +431,35 @@ html, body {
         </div>
         
         <div class="info-section">
-            <h1 class="title" id="movieTitle" contenteditable="true" spellcheck="false">The Perks of Being a Wallflower</h1>
-            <div class="meta" id="movieMeta" contenteditable="true" spellcheck="false">dir. Stephen Chbosky</div>
+            <h1 class="title" id="movieTitle" contenteditable="true" spellcheck="false" placeholder="Movie Title"></h1>
+            <div class="meta" id="movieMeta" contenteditable="true" spellcheck="false" placeholder="dir. Director Name"></div>
             
-            <div class="rating-system">
-                <div class="stars" id="starsContainer">
-                    <!-- Stars rendered dynamically -->
+            <!-- RATING & HEART WRAPPER -->
+            <div class="rating-wrapper">
+                <div class="rating-system">
+                    <div class="stars" id="starsContainer">
+                        <!-- Stars rendered dynamically -->
+                    </div>
+                    <!-- FAVORITE HEART (Absolute positioned, won't move stars) -->
+                    <div class="favorite-heart" id="favoriteHeart" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="#ff2a55">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
             
             <!-- ONE LINE REVIEW -->
-            <div class="review-text" id="movieReview" contenteditable="true" spellcheck="false">"A beautifully heartbreaking coming-of-age story."</div>
+            <div class="review-text" id="movieReview" contenteditable="true" spellcheck="false" placeholder="Write a one-line review..." style="display: none;"></div>
             
-            <!-- ATTRIBUTION / ARCHIVE -->
-            <div class="attribution">
-                <div class="divider-line"><span>ON</span></div>
-                <div class="brand-row">
-                    <span class="brand-name">ARCHIVE</span>
-                    <span class="brand-separator">|</span>
-                    <span class="username" contenteditable="true" spellcheck="false">@4dwik</span>
+            <!-- CINEMATIC TYPOGRAPHY LOCKUP -->
+            <div class="archive-lockup">
+                <div class="lockup-line"></div>
+                <div class="lockup-content">
+                    <span class="lockup-brand">ARCHIVE</span>
+                    <span class="lockup-user"><i>@</i>4dwik</span>
                 </div>
+                <div class="lockup-line"></div>
             </div>
         </div>
     </div>
@@ -408,23 +468,41 @@ html, body {
 <!-- DOUBLE TAP HINT -->
 <div class="hint-toast" id="hintToast">Double-tap anywhere to hide tools</div>
 
-<!-- COMPACT FLOATING TOOLBAR -->
+<!-- COMPACT FLOATING TOOLBAR WITH 2 ROWS -->
 <div class="fixed-bottom-panel" id="toolbar">
+    <!-- Row 1: Search -->
     <div class="compact-row">
         <div class="search-wrapper">
             <div id="suggestions" class="suggestions-container"></div>
             <div class="search-box">
-                <input type="text" id="movieSearch" placeholder="Search movie..." autocomplete="off">
+                <input type="text" id="movieSearch" placeholder="Search for a movie..." autocomplete="off">
                 <button id="searchBtn" onclick="triggerManualSearch()">Fetch</button>
             </div>
         </div>
-        <button class="tool-btn" onclick="updateImg()">Paste Link</button>
     </div>
+    
+    <!-- Row 2: Action Buttons -->
+    <div class="compact-row">
+        <button class="tool-btn" onclick="fetchRandomMovie()">🎲 Rand</button>
+        <button class="tool-btn" onclick="updateImg()">🔗 Poster</button>
+        <button class="tool-btn" onclick="toggleReview()">💬 Rev</button>
+        <button class="tool-btn" onclick="toggleHeart()">❤️ Fav</button>
+    </div>
+    
     <div class="msg-container"><div id="searchMsg"></div></div>
 </div>
 
 <script>
-    // --- DOUBLE TAP TO TOGGLE LOGIC ---
+    // --- LIST OF ICONIC MOVIES FOR RANDOM REFRESH ---
+    const popularMovies = [
+        "Interstellar", "Inception", "The Matrix", "Fight Club", "Pulp Fiction", 
+        "Forrest Gump", "Gladiator", "The Prestige", "The Departed", "Whiplash", 
+        "Goodfellas", "Parasite", "Joker", "Coco", "WALL-E", "Your Name", 
+        "Spirited Away", "The Lion King", "Back to the Future", "The Truman Show", 
+        "Memento", "La La Land", "Prisoners", "Dune", "Arrival"
+    ];
+
+    // --- DOUBLE TAP TO TOGGLE UI ---
     const toolbar = document.getElementById('toolbar');
     let uiVisible = true;
     let lastTapTime = 0;
@@ -439,17 +517,12 @@ html, body {
         }
     }
 
-    // Detect double taps on the document
     document.addEventListener('click', (e) => {
-        if (e.target.closest('#toolbar') || 
-            e.target.closest('.stars') || 
-            e.target.closest('[contenteditable="true"]')) {
+        if (e.target.closest('#toolbar') || e.target.closest('.stars') || e.target.closest('[contenteditable="true"]') || e.target.closest('.favorite-heart')) {
             return;
         }
-
         const currentTime = new Date().getTime();
         const tapLength = currentTime - lastTapTime;
-        
         if (tapLength < 300 && tapLength > 0) {
             toggleUI();
             e.preventDefault();
@@ -457,11 +530,26 @@ html, body {
         lastTapTime = currentTime;
     });
 
-    // Hide hint automatically
-    setTimeout(() => {
-        document.getElementById('hintToast').style.opacity = '0';
-    }, 4000);
+    setTimeout(() => { document.getElementById('hintToast').style.opacity = '0'; }, 4000);
 
+    // --- TOGGLES ---
+    function toggleReview() {
+        const reviewEl = document.getElementById('movieReview');
+        if (reviewEl.style.display === 'none' || reviewEl.style.display === '') {
+            reviewEl.style.display = 'block';
+        } else {
+            reviewEl.style.display = 'none';
+        }
+    }
+
+    function toggleHeart() {
+        const heartEl = document.getElementById('favoriteHeart');
+        if (heartEl.style.display === 'none' || heartEl.style.display === '') {
+            heartEl.style.display = 'flex';
+        } else {
+            heartEl.style.display = 'none';
+        }
+    }
 
     // --- LOCAL CANVAS BLUR LOGIC ---
     function applyPoster(url) {
@@ -487,10 +575,8 @@ html, body {
         img.src = url;
     }
 
-    applyPoster('https://image.tmdb.org/t/p/original/muWA9t1JVAxFBNP6gBbmKxj4VYc.jpg');
 
-
-    // --- PERFECT STAR RATING LOGIC (REDUCED GAP) ---
+    // --- PERFECT STAR RATING LOGIC ---
     const starsContainer = document.getElementById('starsContainer');
     const starPoints = "12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2";
 
@@ -526,7 +612,6 @@ html, body {
         });
     }
 
-    updateStarsUI(3);
 
     // --- MANUAL IMAGE UPDATE ---
     function updateImg() {
@@ -536,13 +621,21 @@ html, body {
         }
     }
 
-    // --- OMDB API SEARCH LOGIC ---
+    // --- OMDB API SEARCH & RANDOM LOGIC ---
     const apiKey = '9b03b995';
     const searchInput = document.getElementById('movieSearch');
     const suggContainer = document.getElementById('suggestions');
     const msg = document.getElementById('searchMsg');
     const btn = document.getElementById('searchBtn');
     let debounceTimer;
+
+    function fetchRandomMovie() {
+        const randomTitle = popularMovies[Math.floor(Math.random() * popularMovies.length)];
+        fetchFullMovie(randomTitle, true);
+    }
+
+    // Trigger Random on Page Load
+    window.onload = fetchRandomMovie;
 
     searchInput.addEventListener('input', (e) => {
         clearTimeout(debounceTimer);
@@ -579,23 +672,19 @@ html, body {
             const data = await response.json();
 
             if (data.Response === "True" && data.Search) {
-                renderSuggestions(data.Search);
+                suggContainer.innerHTML = '';
+                data.Search.slice(0, 4).forEach(movie => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.onclick = () => selectMovie(movie.imdbID);
+                    div.innerHTML = `<div class="sugg-info"><span class="sugg-title">${movie.Title}</span><span class="sugg-year">${movie.Year}</span></div>`;
+                    suggContainer.appendChild(div);
+                });
+                suggContainer.style.display = 'flex';
             } else {
                 suggContainer.style.display = 'none';
             }
         } catch (err) {}
-    }
-
-    function renderSuggestions(movies) {
-        suggContainer.innerHTML = '';
-        movies.slice(0, 5).forEach(movie => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item';
-            div.onclick = () => selectMovie(movie.imdbID);
-            div.innerHTML = `<div class="sugg-info"><span class="sugg-title">${movie.Title}</span><span class="sugg-year">${movie.Year}</span></div>`;
-            suggContainer.appendChild(div);
-        });
-        suggContainer.style.display = 'flex';
     }
 
     function selectMovie(imdbID) {
@@ -611,9 +700,11 @@ html, body {
         fetchFullMovie(query);
     }
 
-    async function fetchFullMovie(queryOrId) {
-        msg.textContent = "Loading...";
-        msg.style.color = "#aaa";
+    async function fetchFullMovie(queryOrId, isRandomLoad = false) {
+        if (!isRandomLoad) {
+            msg.textContent = "Loading...";
+            msg.style.color = "#aaa";
+        }
         btn.disabled = true;
 
         let url = `https://www.omdbapi.com/?apikey=${apiKey}`;
@@ -635,25 +726,42 @@ html, body {
             if (data.Response === "True") {
                 document.getElementById('movieTitle').textContent = data.Title;
                 document.getElementById('movieMeta').textContent = data.Director !== "N/A" ? `dir. ${data.Director}` : "";
+                
+                // Clear the default review to encourage the user to write their own
                 document.getElementById('movieReview').textContent = "";
+                
+                // Randomize stars between 3.5 and 5 for a realistic starting feel
+                const randomRating = (Math.floor(Math.random() * 4) * 0.5) + 3.5;
+                updateStarsUI(randomRating);
 
                 if (data.Poster && data.Poster !== "N/A") {
                     applyPoster(data.Poster.replace('SX300', 'SX1000'));
                 }
                 
-                searchInput.value = ""; 
-                msg.style.color = "#4CAF50";
-                msg.textContent = "Movie updated successfully!";
-                setTimeout(() => msg.textContent = "", 3000);
+                if (!isRandomLoad) {
+                    searchInput.value = ""; 
+                    msg.style.color = "#4CAF50";
+                    msg.textContent = "Movie updated successfully!";
+                    setTimeout(() => msg.textContent = "", 3000);
+                }
             } else {
-                msg.style.color = "#ff6b6b";
-                msg.textContent = data.Error || "Movie not found.";
+                if (!isRandomLoad) {
+                    msg.style.color = "#ff6b6b";
+                    msg.textContent = data.Error || "Movie not found.";
+                }
             }
         } catch (error) {
-            msg.style.color = "#ff6b6b";
-            msg.textContent = "Network error. Try again.";
+            if (!isRandomLoad) {
+                msg.style.color = "#ff6b6b";
+                msg.textContent = "Network error. Try again.";
+            }
         } finally {
             btn.disabled = false;
+            // Hide the initial loading overlay once the first movie is fully loaded
+            if (isRandomLoad) {
+                document.getElementById('loadingOverlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 300);
+            }
         }
     }
 </script>
